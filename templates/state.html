@@ -1,0 +1,40 @@
+{% extends "index.html" %}
+
+{% block content %}
+	{% if data %}
+		<br>
+		<h1 class="container d-flex justify-content-center mt-10 mb-4">Search results</h1>
+		<div class="container mt-4 mb-4">
+		{% if l_state != 0 %}
+			{% for state_name in dict_state.keys() %}
+				<h1>{{state_name}}</h1>
+				<h5>Confirmed cases : {{dict_state[state_name]['confirmed']}}</h5>
+				<h5>Active cases : {{dict_state[state_name]['active']}}</h5>
+				<h5>Recovered cases : {{dict_state[state_name]["recovered"]}}</h5>
+				<h5>Deaths : {{dict_state[state_name]['deaths']}}</h5>
+				<br>
+			{% endfor %}
+		{% else %}
+			<h5 class="d-flex justify-content-center" style="opacity: 50%">No state data found on '{{given_input}}'</h5>
+		{% endif %}
+	{% else %}
+		<h5 class="d-flex justify-content-center" style="opacity: 50%">Search results appear here</h5>
+	{% endif %}	
+		</div>
+{% endblock %}
+
+{% block default %}
+	<div class="container mt-4 mb-4">
+		<hr>
+		<hr>
+		<h2 class="d-flex justify-content-center" style="opacity: 70%">All states</h2>
+		{% for i in full_dict_state %}
+			<h1>{{ i }}</h1>
+			<h5>Confirmed : {{ full_dict_state[i]['confirmed'] }}</h5>
+			<h5>Active : {{ full_dict_state[i]['active'] }}</h5>
+			<h5>Recovered : {{ full_dict_state[i]['recovered'] }}</h5>
+			<h5>Deaths : {{ full_dict_state[i]['deaths'] }}</h5>
+			<br>
+		{% endfor %}
+	</div>
+{% endblock %}

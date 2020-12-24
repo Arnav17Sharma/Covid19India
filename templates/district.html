@@ -1,0 +1,41 @@
+{% extends "index.html" %}
+
+
+{% block content %}
+	{% if data %}
+		<h1 class="container d-flex justify-content-center mt-10 mb-4">Search results</h1>
+		<div class="container mt-4 mb-4">
+			{% if l_district != 0 %}
+				{% for district_name in dict_district.keys() %}
+					<h1>{{district_name}}</h1>
+					<h5>Confirmed cases : {{dict_district[district_name]['confirmed']}}</h5>
+					<h5>Active cases : {{dict_district[district_name]['active']}}</h5>
+					<h5>Recovered cases : {{dict_district[district_name]["recovered"]}}</h5>
+					<h5>Deaths : {{dict_district[district_name]['deceased']}}</h5>
+					<br>
+				{% endfor %}
+			{% else %}
+				<h5 class="d-flex justify-content-center" style="opacity: 50%">No district data found on '{{given_input}}'</h5>
+			{% endif %}
+		
+	{% else %}
+		<h5 class="d-flex justify-content-center" style="opacity: 50%">Search results appear here</h5>
+	{% endif %}
+	</div>
+{% endblock %}
+
+{% block default %}
+	<div class="container mt-4 mb-4">
+		<hr>
+		<hr>
+		<h2 class="d-flex justify-content-center" style="opacity: 70%">All districts</h2>
+		{% for i in full_dict_district.keys() %}
+			<h1>{{ i }}</h1>
+			<h5>Confirmed : {{ full_dict_district[i]['confirmed'] }}</h5>
+			<h5>Active : {{ full_dict_district[i]['active'] }}</h5>
+			<h5>Recovered : {{ full_dict_district[i]['recovered'] }}</h5>
+			<h5>Deaths : {{ full_dict_district[i]['deaths'] }}</h5>
+			<br>
+		{% endfor %}
+	</div>
+{% endblock %}
