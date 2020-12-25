@@ -98,45 +98,88 @@ def find_total_district():
 ''' NOW LETS DO STATE GRAPH DATA!! '''
 
 
-def state_graph():
-
+def state_graph_total():
+    from matplotlib import pyplot as plt
+    from matplotlib import dates as mpl_dates
     import requests
     import json
+    from datetime import datetime
     r3 = requests.get('https://api.covid19india.org/v4/timeseries.json')
     package_json = r3.json()
 
     data = find_total_state()
     for i in data:
-        from matplotlib import pyplot as plt
+
+        # TOTAL LISTS
         state_list_x = []
         state_list_y = []
         state_recovered = []
         state_deceased = []
+
+        # FREQUENCY LISTS
+        state_list_y_f = []
+        state_recovered_f = []
+        state_deceased_f = []
+
         print(i)
         code = data[i]['statecode']
         a = 1
-        for j in list(package_json[code]['dates'])[::20]:
+        initial = []
+        for j in list(package_json[code]['dates']):
+            initial.append(j)
+            if len(initial) > 20 and initial[-2][5:7] != j[5:7]:
+                initial[-1:]
+
+            # print(j)
             # j = list(package_json[code]['dates'])[j]
             # print(j)
-            state_list_x.append(a)
+            # state_list_x.append(a)
+            state_list_x.append(
+                datetime(int(''.join(initial[-1][:4])), int(''.join(initial[-1][5:7])), int(''.join(initial[-1][8:]))))
+
             state_list_y.append(
-                package_json[code]['dates'][j]['total']['confirmed'])
+                package_json[code]['dates'][initial[-1]]['total']['confirmed'])
             try:
                 state_recovered.append(
-                    package_json[code]['dates'][j]['total']['recovered'])
+                    package_json[code]['dates'][initial[-1]]['total']['recovered'])
             except:
                 state_recovered.append(0)
 
             try:
                 state_deceased.append(
-                    package_json[code]['dates'][j]['total']['deceased'])
+                    package_json[code]['dates'][initial[-1]]['total']['deceased'])
             except:
                 state_deceased.append(0)
 
+            try:
+                state_list_y_f.append(
+                    package_json[code]['dates'][initial[-1]]['delta']['confirmed'])
+            except:
+                state_list_y_f.append(0)
+            try:
+                state_recovered_f.append(
+                    package_json[code]['dates'][initial[-1]]['delta']['recovered'])
+            except:
+                state_recovered_f.append(0)
+
+            try:
+                state_deceased_f.append(
+                    package_json[code]['dates'][initial[-1]]['delta']['deceased'])
+            except:
+                state_deceased_f.append(0)
+
             a += 10
-        plt.plot(state_list_x, state_list_y, 'b', label="Confirmed")
-        plt.plot(state_list_x, state_recovered, '-g', label='Recovered')
-        plt.plot(state_list_x, state_deceased, 'r--', label='Deceased')
+        plt.plot_date(state_list_x, state_list_y, 'b',
+                      label="Confirmed", linestyle='solid')
+        # plt.gcf().autofmt_xdate()
+        plt.plot_date(state_list_x, state_recovered, '-g',
+                      label='Recovered', linestyle='solid')
+        # plt.gcf().autofmt_xdate()
+        plt.plot_date(state_list_x, state_deceased, 'r',
+                      label='Deceased', linestyle='solid')
+        # plt.gcf().autofmt_xdate()
+        date_format = mpl_dates.DateFormatter('%b')
+        plt.gca().xaxis.set_major_formatter(date_format)
 
         plt.xlabel('Days')
         plt.ylabel('Total Cases')
@@ -144,12 +187,36 @@ def state_graph():
         plt.legend()
         # plt.show()
 
-        from PIL import Image
-        img = Image.new("RGB", (800, 1280), (255, 255, 255))
-        img.save(f"{i}.png", "PNG")
-        plt.savefig(f'./assets/graphs/{i}.png')
+        # from PIL import Image
+        # img = Image.new("RGB", (800, 1280), (255, 255, 255))
+        # img.save(f"{i}_total.png", "PNG")
+        plt.savefig(f'./assets/graphs/{i}_total.png')
+        plt.clf()
+
+        plt.plot_date(state_list_x, state_list_y_f, 'b',
+                      label="Confirmed")
+        # plt.gcf().autofmt_xdate()
+        plt.plot_date(state_list_x, state_recovered_f, '-g',
+                      label='Recovered')
+        # plt.gcf().autofmt_xdate()
+        plt.plot_date(state_list_x, state_deceased_f, 'r',
+                      label='Deceased')
+        # plt.gcf().autofmt_xdate()
+        date_format = mpl_dates.DateFormatter('%b')
+        plt.gca().xaxis.set_major_formatter(date_format)
+
+        plt.xlabel('Days')
+        plt.ylabel('Total Cases')
+        plt.title(f'{i} covid cases')
+        plt.legend()
+        # plt.show()
+
+        # from PIL import Image
+        # img = Image.new("RGB", (800, 1280), (255, 255, 255))
+        # img.save(f"{i}_total.png", "PNG")
+        plt.savefig(f'./assets/graphs/{i}_f.png')
         plt.clf()
         # break
 
 
-state_graph()
+state_graph_total()
